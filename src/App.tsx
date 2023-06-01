@@ -1,33 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ChangeEvent, FormEvent, useState } from "react";
+
+import css from "./App.module.css";
+interface Field {
+  name:string;
+  password:string;
+}
+
+const initFormField: Field = {
+  name:"",
+  password:"",
+}
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [fields, setFields] = useState(initFormField);
 
+  const getInputData = (event: ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = event.target;
+    if(name === "name") {
+      setName(value);
+    } else if (name === "password") {
+      setPassword(value);
+    }
+    setFields(prevState => {
+      return {
+        ...prevState,
+        [name]: value,
+      };
+    });
+
+  };
+
+  const submitForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    resetField();
+  }
+  const resetField = () => {
+    setName("");
+    setPassword("");
+  }
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className={css.wrapper}>
+      <form onSubmit={submitForm}>
+        <label>Name</label>
+        <input type="text" name="name" value={name} onChange={getInputData}/>
+        {/* <input type="password"/> */}
+        <label>Password</label>
+
+        <input type="password" name="password" value={password} onChange={getInputData}/>
+      <button type="submit">Add</button>
+      </form>
+    </div>
     </>
   )
 }
